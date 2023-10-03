@@ -42,6 +42,7 @@ function caminar (pasos, camino){
                     var valorFinal = camino[contPasos];
                     camino[contPasos] = camino[0];
                     camino[0] = valorFinal;
+                    //contPasos = 0;
                 }else {
                     var temp = camino[contPasos];
                     camino[contPasos] = camino[contPasos + 1];
@@ -50,7 +51,7 @@ function caminar (pasos, camino){
 
                 console.log("Paso: " + paso );
                 console.log(camino);
-                //console.log(i);
+                //console.log("valor de i: "+i);
                 contPasos++;
                 paso++;
             } while (contPasos<pasos[i]);
