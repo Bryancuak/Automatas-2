@@ -85,9 +85,9 @@ fs.readFile('procedure.txt', 'utf-8', (err, data) => {
         for (let i = 0; i < palabras_reservadas.length; i++) {
             for (let j = 0; j < arraySpliteado.length; j++) {
                 if (palabras_reservadas[i] === arraySpliteado[j]) {
-                    //console.log(`Encontrado: ${palabras_reservadas[i]}`);
-                    let indice = numeros.indexOf(palabras_reservadas);
-                    console.log(indice);
+                    console.log(`Encontrado: ${palabras_reservadas[i]}`);
+                    //let indice = palabras_reservadas.indexOf(arraySpliteado[j]);
+                    //console.log(indice);
                 }
             }
             }

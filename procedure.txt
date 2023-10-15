@@ -1,4 +1,4 @@
-CREATE DEFINER =  12331 'admin'@'localhost' PROCEDURE account_count()
+CREATE ACCOUNT DEFINER =  12331 'admin'@'localhost' PROCEDURE account_count()
 BEGIN
 SELECT 'Number of accounts:', COUNT(*) FROM mysql.user;
 END;
