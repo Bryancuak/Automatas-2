@@ -20,7 +20,7 @@ fs.readFile('procedure.txt', 'utf-8', (err, data) => {
     if (err){
         console.log(err);
         return;
-    } 
+    }
         //const array = data.split('\n');
         const caracteres_Especiales = [';', ':', "'", '=', '(', ')', '"','*', '.', ' ', '@', '[', ']', '|', '\n', '\r']
         let arraySpliteado = [];
@@ -43,4 +43,55 @@ fs.readFile('procedure.txt', 'utf-8', (err, data) => {
         }
         
         console.log(arraySpliteado);
+
+    fs.readFile('sqlkeywords.txt', 'utf-8', (err, datos) => {
+        if (err){
+            console.log(err);
+            return;
+        } 
+        
+        const caracteres_separadores = [' ', '"']
+        let palabras_reservadas = [];
+        let tokens = [];
+        let palabra = ""
+        let numeros = [];
+        let num = '';
+
+        for (let i = 0; i < datos.length; i++) {
+            const caracter = datos[i];
+            if (!isNaN(caracter) ) {
+                if (palabra !== "") {
+                    palabras_reservadas.push(palabra); // inserta todas las palabras al final del arreglo
+                    palabra = "";
+                }
+            }
+            else if (!caracteres_separadores.includes(caracter)) {
+                palabra += caracter;
+            }
+            if (isNaN(caracter)) {
+                if (num !== "") {
+                    numeros.push(num);
+                    num = "";
+                }
+            }
+            else if (!caracteres_Especiales.includes(caracter)){
+                num += caracter;
+            }
+        }
+
+        console.log(palabras_reservadas);
+        console.log(numeros);
+        
+        for (let i = 0; i < palabras_reservadas.length; i++) {
+            for (let j = 0; j < arraySpliteado.length; j++) {
+                if (palabras_reservadas[i] === arraySpliteado[j]) {
+                    //console.log(`Encontrado: ${palabras_reservadas[i]}`);
+                    let indice = numeros.indexOf(palabras_reservadas);
+                    console.log(indice);
+                }
+            }
+            }
+
+    });
 });
+
