@@ -13,6 +13,32 @@ const fs = require('node:fs');
     explico de la primera condicional. Para finalizar se imrpime en consola el arraySpliteado, el cual contiene todas las palabras, 
     numeros y caracteres especiales separados.
 
+    #2da parte 
+    La segunda parte del codigo lee otro archivo de texto llamado sqlkeywords.txt, donde se encuentran las palabras reservadas
+    y su respectivo numero o token asignado, al igual que en la primera parte, se itera caracter por caracter de este archivo, 
+    si el caracter en el que estamos iterando es un numero, entoces entramos a la condicional, donde tenemos otra condicional
+    la cual se cumple si la palabra es diferente de vacia, si esto se cumple, la palabra se inserta en el arreglo de palabras_reservadas
+    y a la palabra le asignamos el valor de vacio para seguir formando palabras despues y que estas no se junten una con otra, 
+    despues tenemos la condicional else if, en la cual si el caracter en el que estamos iterando es diferente de los caracteres_separadores
+    los caracteres se iran concatenando en palabra hasta que la condiconal deje de cumplirse y entre a la anterior condiconal. 
+    las dos condicionales anteriores son para insertar palabras reservadas en el arreglo palabras_reservadas.
+
+    Despues tenemos otras dos condicionales, pero estas se usan para insertar los numeros en el arreglo numeros, la primer condicional
+    se cumple si el caracter en el que estamos iterando no es un numero, si esto se cumple, entramos a la condicional, donde hay 
+    otra condicional, esta se cumple si la variable num es distinta de vacia (esta variable es para guardar los numeros encontrados
+    en el documento de texto), si esto se cumple, entonces entramos a esta condicional y el num se inserta en el arreglo numeros
+    y la variable num se establece en vacio para seguir formando numeros despues y que estos no se junten con los anteriores numeros, 
+    despues tenemos otra condicional else if, en la cual si el caracter en el que estamos iterando es diferente de los caracteres_Especiales
+    el caracter se ira concatenando en num hasta que esta condicional no se cumpla y entremos a la anterior condicional. 
+    Una vez acabo de iterar todos los elementos del documento, se imprimen los arreglos palabras_reservadas y numeros. 
+
+    Despues tenemos dos for anidados, los cuales recorreran cada elemento de los arreglos arraySpliteado y palabras_reservadas 
+    respectivamente y se comparan los elementos que se van recorriendo, si los elementos de ambos arreglos son exactamente iguales 
+    se cumple la condicional y se imprimen en consola los elementos iguales, depues en el arreglo numeros se toma el indice de 
+    palabras_reservadas (j, el cual es el indice en de los elementos que se encontraron iguales) + 1 (esto debido a que  
+    no me lee las comillas "" del documento de texto) y el elemento al que ingresamos se guarda en la variable numToken, 
+    por ultimo insertamos la variable numToken en arreglo token. 
+
 */
 
 
@@ -70,7 +96,7 @@ fs.readFile('procedure.txt', 'utf-8', (err, data) => {
             }
             if (isNaN(caracter)) {
                 if (num !== "") {
-                    numeros.push(num);
+                    numeros.push(num); //inserta todos los numeros al final del arreglo
                     num = "";
                 }
             }
@@ -82,15 +108,16 @@ fs.readFile('procedure.txt', 'utf-8', (err, data) => {
         console.log(palabras_reservadas);
         console.log(numeros);
         
-        for (let i = 0; i < palabras_reservadas.length; i++) {
-            for (let j = 0; j < arraySpliteado.length; j++) {
-                if (palabras_reservadas[i] === arraySpliteado[j]) {
-                    console.log(`Encontrado: ${palabras_reservadas[i]}`);
-                    //let indice = palabras_reservadas.indexOf(arraySpliteado[j]);
-                    //console.log(indice);
+        for (let i = 0; i < arraySpliteado.length; i++) {
+            for (let j = 0; j < palabras_reservadas.length; j++) {
+                if (palabras_reservadas[j] === arraySpliteado[i]) {
+                    console.log(`Encontrado: ${arraySpliteado[i]}`);
+                    let numToken = numeros[j + 1];
+                    tokens.push(numToken);
                 }
             }
             }
+            console.log(tokens);
 
     });
 });
