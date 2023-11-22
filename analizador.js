@@ -41,6 +41,10 @@ const fs = require('node:fs');
 
 */
 
+let palabras_reservadas = [];
+let numeros = [];
+let tokens = [];
+
 
 fs.readFile('procedure.txt', 'utf-8', (err, data) => {
     if (err){
@@ -50,6 +54,7 @@ fs.readFile('procedure.txt', 'utf-8', (err, data) => {
         //const array = data.split('\n');
         const caracteres_Especiales = [';', ':', "'", '=', '(', ')', '"','*', '.', ' ', '@', '[', ']', '|', '\n', '\r']
         let arraySpliteado = [];
+        let cadenasDeTexto = [];
         //const array = cadena_split.map(linea => linea.trim())
         let palabra = "";
 
@@ -67,58 +72,139 @@ fs.readFile('procedure.txt', 'utf-8', (err, data) => {
                 palabra += caracter; //con esto se concatena todo aquello que no es un caracter especial
             }
         }
-        
         console.log(arraySpliteado);
-
-    fs.readFile('sqlkeywords.txt', 'utf-8', (err, datos) => {
-        if (err){
-            console.log(err);
-            return;
-        } 
         
-        const caracteres_separadores = [' ', '"']
-        let palabras_reservadas = [];
-        let tokens = [];
-        let palabra = ""
-        let numeros = [];
-        let num = '';
 
-        for (let i = 0; i < datos.length; i++) {
-            const caracter = datos[i];
-            if (!isNaN(caracter) ) {
-                if (palabra !== "") {
-                    palabras_reservadas.push(palabra); // inserta todas las palabras al final del arreglo
-                    palabra = "";
-                }
-            }
-            else if (!caracteres_separadores.includes(caracter)) {
-                palabra += caracter;
-            }
-            if (isNaN(caracter)) {
-                if (num !== "") {
-                    numeros.push(num); //inserta todos los numeros al final del arreglo
-                    num = "";
-                }
-            }
-            else if (!caracteres_Especiales.includes(caracter)){
-                num += caracter;
-            }
+fs.readFile('sqlkeywords.txt', 'utf-8', (err, datos) => {
+    if (err){
+        console.log(err);
+        return;
+    } 
+    
+    const caracteres_separadores = [' ', '"']
+    //let palabras_reservadas = [];
+    //let tokens = [];
+    let palabra = "";
+    //let numeros = [];
+    let num = '';
+
+    const lineas = datos.split('\n');
+
+    // Itera sobre cada línea y extrae los números y las palabras
+    for (let i = 0; i < lineas.length; i++) {
+        const linea = lineas[i].trim();
+        const partes = linea.split(' ');
+
+        // Verifica si hay al menos dos partes en la línea
+        if (partes.length >= 2) {
+            numeros.push(partes[0]);
+            palabras_reservadas.push(partes.slice(1).join(' ').replace('"', '').replace('"', ''));
+        }
+    }
+
+
+    console.log(palabras_reservadas);
+    console.log(numeros);
+    
+    for (let i = 0; i < arraySpliteado.length; i++) {
+        let encontrado = false;
+
+        if (arraySpliteado[i] === ' ' || arraySpliteado[i] === "\n" || arraySpliteado[i] === "\r") {
+            continue;//Cuando encuentra espacios, saltos de linea omite todo el codigo siguiente 
         }
 
-        console.log(palabras_reservadas);
-        console.log(numeros);
-        
-        for (let i = 0; i < arraySpliteado.length; i++) {
-            for (let j = 0; j < palabras_reservadas.length; j++) {
-                if (palabras_reservadas[j] === arraySpliteado[i]) {
-                    console.log(`Encontrado: ${arraySpliteado[i]}`);
-                    let numToken = numeros[j + 1];
-                    tokens.push(numToken);
-                }
+
+        for (let j = 0; j < palabras_reservadas.length; j++) {
+            if (palabras_reservadas[j] === arraySpliteado[i]) {
+                console.log(`Encontrado: ${arraySpliteado[i]}`);
+                let numToken = numeros[j];
+                tokens.push(numToken);
+                encontrado = true;
+                break;
             }
-            }
-            console.log(tokens);
+        }
+        if (!encontrado) {
+            let numTokenNoReservada = '998';
+            tokens.push(numTokenNoReservada);
+            
+        }
+        if (arraySpliteado[i] === "'") {
+            do {
+                palabra += arraySpliteado[i];
+                i++; // Avanzar al siguiente caracter
+            } while (arraySpliteado[i] !== "'");
+            cadenasDeTexto.push(palabra);
+            palabra = "";
+        }
+
+    }
+    
+        console.log(tokens);
+
 
     });
+
+    
+fs.readFile('reglas.txt', 'utf-8', (err, data) => {
+    if (err){
+        console.log(err);
+        return;
+    }
+    function dividirArreglo(arr) {
+        let arreglosResultantes = [];
+        let subarreglo = [];
+
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i] === '6') {
+                // Incluir el '6' en el subarreglo actual
+                subarreglo.push(arr[i]);
+                // Guardar el subarreglo actual en el arreglo resultante
+                arreglosResultantes.push(subarreglo);
+                // Reiniciar el subarreglo para el próximo conjunto de números
+                subarreglo = [];
+            } else {
+            // Agregar el número actual al subarreglo
+            subarreglo.push(arr[i]);
+            }
+        }
+        if (subarreglo.length > 0) {
+            arreglosResultantes.push(subarreglo);
+        }
+        return arreglosResultantes;
+    }
+    const tokensDivididos = dividirArreglo(tokens);
+    //console.log(tokensDivididos);
+
+
+    //Regex /\r?\n/
+    const lineas = data.split("\r\n");
+    const reglas = [];
+
+    for (let i = 0; i < lineas.length; i++) {
+        const numeros = lineas[i].split(',').map(Number);
+        reglas.push(numeros);
+        
+    }
+    console.log(reglas);
+
+    
+    for (const arreglo of reglas) {
+
+        // Verificar que los arreglos tengan el mismo tamaño
+        if (tokens.length === arreglo.length) {
+            const arregloString = arreglo.toString();
+            //console.log(arregloString);
+    
+        if (tokens === arregloString) {
+            console.log("Todo esta correcto");
+            break;
+        } else {
+            console.log(`En lugar de [${tokens}] debería estar [${arreglo}].`);
+        }
+        } 
+    }
+
+    });
+
 });
 
