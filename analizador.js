@@ -173,7 +173,7 @@ fs.readFile('reglas.txt', 'utf-8', (err, data) => {
         return arreglosResultantes;
     }
     const tokensDivididos = dividirArreglo(tokens);
-    //console.log(tokensDivididos);
+    console.log(tokensDivididos);
 
 
     //Regex /\r?\n/
@@ -190,14 +190,14 @@ fs.readFile('reglas.txt', 'utf-8', (err, data) => {
     
     for (const arreglo of reglas) {
 
-        // Verificar que los arreglos tengan el mismo tamaño
+        // Verifica que los arreglos tengan el mismo tamaño
         if (tokens.length === arreglo.length) {
             const arregloString = arreglo.toString();
             //console.log(arregloString);
     
-        if (tokens === arregloString) {
+        if (tokens == arregloString) {
             console.log("Todo esta correcto");
-            break;
+            //break;
         } else {
             console.log(`En lugar de [${tokens}] debería estar [${arreglo}].`);
         }
