@@ -1,1 +1,6 @@
-SELECT * FROM tabla;
+SELECT id, customer, id, id 
+FROM orders
+INNER JOIN customer ON orderscustomerid = customerid
+WHERE customer LIKE examplecom;
+ola 5;
+siuu;

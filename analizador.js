@@ -52,7 +52,7 @@ fs.readFile('procedure.txt', 'utf-8', (err, data) => {
         return;
     }
         //const array = data.split('\n');
-        const caracteres_Especiales = [';', ':', "'", '=', '(', ')', '"','*', '.', ' ', '@', '[', ']', '|', '\n', '\r']
+        const caracteres_Especiales = [';', ':', "'", '=', '(', ')', '"','*', '.', ' ', '@', '[', ']', '|', '\n', '\r',',']
         let arraySpliteado = [];
         let cadenasDeTexto = [];
         //const array = cadena_split.map(linea => linea.trim())
@@ -160,10 +160,10 @@ fs.readFile('reglas.txt', 'utf-8', (err, data) => {
                 subarreglo.push(arr[i]);
                 // Guardar el subarreglo actual en el arreglo resultante
                 arreglosResultantes.push(subarreglo);
-                // Reiniciar el subarreglo para el próximo conjunto de números
+                // Reiniciar el subarreglo para el proximo conjunto de numeros
                 subarreglo = [];
             } else {
-            // Agregar el número actual al subarreglo
+            // Agregar el numero actual al subarreglo
             subarreglo.push(arr[i]);
             }
         }
@@ -173,7 +173,14 @@ fs.readFile('reglas.txt', 'utf-8', (err, data) => {
         return arreglosResultantes;
     }
     const tokensDivididos = dividirArreglo(tokens);
-    console.log(tokensDivididos);
+
+    var tokensNumeros = tokensDivididos.map(function(subarray) {
+        return subarray.map(function(token) {
+            return parseInt(token, 10); 
+        });
+    });
+    console.log("///////////////////Tokens obtenidos///////////////////");
+    console.log(tokensNumeros);
 
 
     //Regex /\r?\n/
@@ -185,23 +192,45 @@ fs.readFile('reglas.txt', 'utf-8', (err, data) => {
         reglas.push(numeros);
         
     }
+    console.log("///////////////////Reglas///////////////////");
     console.log(reglas);
 
     
-    for (const arreglo of reglas) {
+    // Funcion para obtener el tamaño de cada arreglo interno
+    const obtenerTamanos = (arreglos) => arreglos.map(arr => arr.length);
+    // Funcion para comparar arreglos internos
+    const compararArreglos = (arr1, arr2) => {
+        if (arr1.length !== arr2.length) {
+        return false;
+    }
 
-        // Verifica que los arreglos tengan el mismo tamaño
-        if (tokens.length === arreglo.length) {
-            const arregloString = arreglo.toString();
-            //console.log(arregloString);
-    
-        if (tokens == arregloString) {
-            console.log("Todo esta correcto");
-            //break;
-        } else {
-            console.log(`En lugar de [${tokens}] debería estar [${arreglo}].`);
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+        return false;
         }
-        } 
+    }
+    return true;
+    };
+
+    // Obtener tamaños de los arreglos internos
+    const tamanosTokensDivididos = obtenerTamanos(tokensNumeros);
+    const tamanosReglas = obtenerTamanos(reglas);
+
+    // Encontrar e imprimir arreglos internos con elementos distintos
+    console.log("Elementos distintos e identicos:");
+
+    for (let i = 0; i < tamanosTokensDivididos.length; i++) {
+        
+        for (let j = 0; j < tamanosReglas.length; j++) {
+            if (tamanosTokensDivididos[i] === tamanosReglas[j]) {
+                const sonDistintos = !compararArreglos(tokensNumeros[i], reglas[j]);
+    
+                console.log(`Arreglos ${sonDistintos ? 'distintos' : 'idénticos'} de tamaño ${tamanosTokensDivididos[i]}`);
+                console.log('TokensDivididos:', tokensNumeros[i]);
+                console.log('Reglas:', reglas[j]);
+                console.log('---');
+        }
+        }
     }
 
     });
